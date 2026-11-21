@@ -134,17 +134,6 @@ Use SQL migrations in `supabase/migrations/`. Favor UUID PKs, `timestamptz`, for
 
 Build this **after** manual CRM and discovery inbox are usable.
 
-### Discovery region priority
-
-Process eligible public sources in this order:
-
-1. **Jabodetabek** (Jakarta, Bogor, Depok, Tangerang, and Bekasi).
-2. **Rest of Java**, excluding areas already covered in Jabodetabek.
-3. **Sumatra**.
-4. **Other Indonesian regions**.
-
-Start the pilot in Jabodetabek. For expanded runs, schedule eligible work by region before applying the per-run budget. Use the prospect's evidenced business location for candidate classification. Keep uncertain locations unclassified for review until verified.
-
 ### Discovery targets
 
 - Indonesian manufacturers, importers, exporters, distributors, retail/FMCG companies, automotive/electronics suppliers, and businesses with warehouses or distribution operations.
