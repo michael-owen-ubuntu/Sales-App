@@ -2,6 +2,84 @@
 
 > **Instructions for Codex CLI** — Build a lightweight, distributable desktop application for researching Indonesian businesses that may need logistics services, managing prospect contacts, follow-ups, and eventually personal gross-profit performance. **Read this entire README before making changes.**
 
+## Run the CRM
+
+The CRM includes company and contact management, scheduled follow-ups, an activity history, and an evidence-backed discovery inbox. With both Supabase settings blank, the app opens a fictional example workspace. You can try creating and editing records there. Changes are kept in memory until you reload or close the app.
+
+Use Node.js 22 LTS (22.13 or newer within that release line) and npm. For native development, install Rust and the platform dependencies in the [Tauri prerequisites guide](https://tauri.app/start/prerequisites/). On Linux these include the WebKitGTK 4.1 development libraries.
+
+```bash
+npm ci
+npm run tauri dev
+```
+
+For a browser preview, run `npm run dev` and open `http://localhost:1420`. For local verification, run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`. The build command produces the frontend bundle in `dist/`.
+
+### Connect Supabase
+
+1. In a development Supabase project, apply [CRM](supabase/migrations/202611210001_crm.sql), [Follow-ups](supabase/migrations/202611210002_followups.sql), [Discovery](supabase/migrations/202611210003_discovery.sql), [Discovery run logs](supabase/migrations/202611210004_discovery_runs.sql), and [Spreadsheet import](supabase/migrations/202611210005_spreadsheet_import.sql) in that order. Then apply [Indonesian discovery contacts](supabase/migrations/202611210006_indonesian_discovery.sql). Then apply [Discovery ranking](supabase/migrations/202611210007_discovery_ranking.sql). Apply [Discovery enrichment](supabase/migrations/202611210008_discovery_enrichment.sql) for profile updates. Apply [Google Place IDs](supabase/migrations/202611210009_google_place_id.sql) to save confirmed map locations. Run pending migrations once in the SQL Editor or through your existing Supabase migration workflow.
+2. Enable Email authentication and create a confirmed email/password user in **Authentication → Users**. For a private pilot, keep public sign-up disabled.
+3. Run `cp .env.example .env.local`. Set `VITE_SUPABASE_URL` to your project URL and `VITE_SUPABASE_PUBLISHABLE_KEY` to your publishable key or legacy anon key. Vite embeds these public values into the build.
+4. Restart `npm run dev` or `npm run tauri dev`, then sign in. Rebuild the desktop package after changing these settings.
+
+Each company has one sales lead. Archiving hides the company from the active directory and preserves its contacts and follow-up status. Open the archived directory to restore it.
+
+### Track follow-ups and activity
+
+- Use **Follow-ups** or a company’s **Follow-up tasks** section to schedule, reschedule, complete, cancel, or reopen a task. Completed and cancelled tasks are available through the status filter.
+- The dashboard groups open tasks for active companies into **Overdue**, **Today**, and **Upcoming**. Overdue means the due time has passed. Dates and times use your device’s time zone, and the database stores the underlying timestamps.
+- Use **Activities** or a company’s activity section to log an interaction and optionally associate a contact. The timeline includes subsequent lead and task status changes. Deleting a task preserves its prior status changes, and removing a contact preserves its recorded name in past activities.
+
+### Try the discovery inbox
+
+Open **Discover** in the fictional example workspace. The examples cover a likely prospect, an existing CRM match, a logistics provider, and a candidate with limited evidence. Each candidate shows source excerpts, capture times, and evidence behind the suggested services.
+
+Choose **Accept as company**, **Reject**, **Mark duplicate**, or **Needs review**. Acceptance creates a new prospect with status **New** and links the company back to the evidence. The inbox shows the requested company and contact fields. Explicitly published receptionist and logistics contacts carry over when accepted. Missing values stay blank. Possible matches require confirmation before creating a separate company. Flagged logistics providers can be reviewed, and acceptance is disabled.
+
+To exercise staging in a development Supabase project, set `DISCOVERY_TEST_EMAIL` and `DISCOVERY_TEST_PASSWORD` in the shell for a confirmed test account. Use the public Supabase settings from `.env.local` or the shell environment.
+
+```bash
+npm run discovery:examples -- --dry-run
+npm run discovery:examples
+```
+
+The dry run lists the four fictional entries. The second command stages them for the signed-in test user. Repeating it leaves the original evidence and review decisions intact because the RPC uses an owner-scoped stable fingerprint. Sign in with that test account to review the staged entries. The example script uses no discovery services and the app can run with an empty inbox.
+
+### Run the local worker
+
+The Python 3.11+ worker reads approved public pages containing structured organization data and stages candidates for review. Try the included local HTML fixture with no credentials or network access.
+
+```bash
+cd worker
+python3 -m discovery --config examples/sources.json --dry-run --source example-directory --limit 10
+python3 -m unittest discover -s tests -v
+```
+
+The [worker guide](worker/README.md) covers source configuration, Supabase sign-in, the optional reviewed Hermes handoff, and scheduling on Linux and Windows. **Settings → Discovery worker** shows recent synced run summaries.
+
+### Import and export spreadsheets
+
+1. Open **Companies → Import** and choose an XLSX workbook or UTF-8 CSV file. The file limit is 5 MiB, and XLSX workbooks can expand to 16 MiB. Each workbook can contain up to 10 worksheets, with up to 1,025 rows and 64 columns per sheet. Choose a worksheet and header row when needed.
+2. Verify the column mapping. **Company name** is required, and each contact you import needs a name. You can map company details, preferred receptionist and logistics PIC fields, and an additional contact with a role. Format phone numbers as text in Excel to preserve leading zeros. Use full HTTP or HTTPS URLs and ISO dates (`YYYY-MM-DD`) in CSV. Separate suggested services with a vertical bar.
+3. Review the preview and any possible matches against CRM records or earlier spreadsheet rows. Duplicate rows start as **Skip**. You can explicitly create a separate company or add new contacts to a selected match. Attaching contacts preserves existing company details and preferred contacts.
+4. Choose **Import** to save the selected rows. Each row saves its company and contacts together. After a partial failure, retry from the same open dialog to reuse the import receipts. Use **Download error report** for invalid rows, skipped duplicates, and save errors.
+
+Use **Export** in **Companies** or **Follow-ups** to save the current filtered view as XLSX or CSV. Company exports include the preferred receptionist and logistics PIC. Follow-up exports label UTC timestamps and include the current due bucket for open tasks. XLSX cells are written as text, and CSV formula-like values are escaped. Use XLSX to preserve phone numbers as text when reopening in Excel.
+
+### Verify row-level security
+
+In a disposable Supabase project with the migration applied, run [the two-user RLS check](supabase/tests/crm_rls.sql) as the database owner in the SQL Editor. It uses fictional data inside a rolled-back transaction. It checks owner access, cross-user read and write restrictions, cross-owner foreign keys, preferred-contact reassignment, and anonymous access.
+
+Run [the follow-up RLS check](supabase/tests/followups_rls.sql) after both migrations. It checks task and activity isolation, status history, rescheduling, contact removal, and archived company behavior.
+
+Run [the discovery RLS check](supabase/tests/discovery_rls.sql) after applying the discovery migration. It checks owner isolation, fingerprint retries, review permissions, acceptance rollback, and CRM duplicate protection.
+
+Run [the worker log RLS check](supabase/tests/discovery_runs_rls.sql) after applying the run log migration. It checks owner isolation and append-only, idempotent run records.
+
+Run [the spreadsheet import check](supabase/tests/spreadsheet_import_rls.sql) after applying the spreadsheet migration. It verifies row rollback, idempotent retries, company and contact preservation, and cross-account isolation.
+
+For an end-to-end check, create two confirmed test accounts. Sign in with account A and create a synthetic company with a logistics contact, follow-up task, and activity. Copy that company’s app route, then sign out and sign in with account B. A’s records should be absent from the workspace, and opening the company route should show **Company unavailable**. Create records as B and repeat the check in the opposite direction.
+
 ## 0. Non-negotiable product context
 
 - This is initially a **personal productivity tool**, not an official GPI Logistics system or a multi-user enterprise CRM. It may later be installed by a few trusted colleagues. Do not implement manager hierarchies, team roles, or shared ownership workflows in the MVP.

@@ -1,0 +1,11 @@
+[Unit]
+Description=GPI Sales Intelligence discovery
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Projects/Sales-App/worker
+EnvironmentFile=%h/.config/gpi-sales-discovery/worker.env
+LoadCredential=supabase-password:%h/.config/gpi-sales-discovery/supabase-password
+ExecStart=/usr/bin/python3 -m discovery --config %h/.config/gpi-sales-discovery/sources.json --limit 30
+TimeoutStartSec=6min
+UMask=0077

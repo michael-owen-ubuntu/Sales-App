@@ -1,0 +1,8 @@
+[Unit]
+Description=Tick the Hermes scheduler for GPI Sales Intelligence
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/hermes cron tick
+TimeoutStartSec=6min
+UMask=0077

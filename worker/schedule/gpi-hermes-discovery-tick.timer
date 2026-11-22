@@ -1,0 +1,9 @@
+[Unit]
+Description=Run the local Hermes scheduler after the daily discovery time
+
+[Timer]
+OnCalendar=*-*-* 09:01:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

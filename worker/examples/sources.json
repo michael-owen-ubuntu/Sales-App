@@ -1,0 +1,10 @@
+{
+  "sources": [
+    {
+      "id": "example-directory",
+      "name": "Fictional manufacturer directory",
+      "url": "https://directory.example/indonesia",
+      "fixture": "directory.html"
+    }
+  ]
+}

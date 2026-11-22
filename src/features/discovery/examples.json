@@ -1,0 +1,137 @@
+[
+  {
+    "content_fingerprint": "example:arunika-directory",
+    "company_name": "PT Arunika Komponen Nusantara",
+    "source_name": "Example manufacturer directory",
+    "source_url": "https://directory.example/arunika",
+    "website": "https://arunika.example",
+    "address": "",
+    "industry": "Automotive",
+    "city": "Bekasi",
+    "province": "Jawa Barat",
+    "company_type": "Manufacturer",
+    "reason": "The example directory lists imported production components.",
+    "confidence": "MEDIUM",
+    "is_logistics_provider": false,
+    "last_checked_at": "2026-11-20T07:00:00Z",
+    "evidence": [
+      {
+        "url": "https://directory.example/arunika",
+        "excerpt": "The plant sources precision components from suppliers outside Indonesia.",
+        "captured_at": "2026-11-20T07:00:00Z"
+      }
+    ],
+    "suggested_services": [
+      {
+        "service": "Customs clearance",
+        "reason": "Published international sourcing suggests a potential customs clearance need.",
+        "evidence_url": "https://directory.example/arunika"
+      }
+    ],
+    "country_code": "ID"
+  },
+  {
+    "content_fingerprint": "example:cakrawala-exhibitor",
+    "company_name": "PT Cakrawala Kemasan Indonesia",
+    "source_name": "Example exhibitor directory",
+    "source_url": "https://expo.example/exhibitors/cakrawala",
+    "website": "https://cakrawala-kemasan.example",
+    "address": "",
+    "industry": "Packaging",
+    "city": "Semarang",
+    "province": "Jawa Tengah",
+    "company_type": "Manufacturer",
+    "reason": "The example exhibitor profile describes regional exports of industrial packaging.",
+    "confidence": "HIGH",
+    "is_logistics_provider": false,
+    "last_checked_at": "2026-11-20T08:00:00Z",
+    "evidence": [
+      {
+        "url": "https://expo.example/exhibitors/cakrawala",
+        "excerpt": "Our Semarang plant exports industrial packaging to customers in Southeast Asia.",
+        "captured_at": "2026-11-20T08:00:00Z"
+      }
+    ],
+    "suggested_services": [
+      {
+        "service": "Sea freight",
+        "reason": "Regional exports make sea freight worth discussing. Transport mode is unconfirmed.",
+        "evidence_url": "https://expo.example/exhibitors/cakrawala"
+      },
+      {
+        "service": "Domestic trucking",
+        "reason": "The plant location provides a starting point for discussing domestic pickup.",
+        "evidence_url": "https://expo.example/exhibitors/cakrawala"
+      }
+    ],
+    "country_code": "ID"
+  },
+  {
+    "content_fingerprint": "example:lintas-provider",
+    "company_name": "PT Lintas Pelabuhan Utama",
+    "source_name": "Example business directory",
+    "source_url": "https://directory.example/lintas",
+    "website": "",
+    "address": "",
+    "industry": "Freight forwarding",
+    "city": "Jakarta",
+    "province": "DKI Jakarta",
+    "company_type": "Logistics provider",
+    "reason": "The example profile advertises freight forwarding and third-party warehousing services.",
+    "confidence": "HIGH",
+    "is_logistics_provider": true,
+    "last_checked_at": "2026-11-19T09:15:00Z",
+    "evidence": [
+      {
+        "url": "https://directory.example/lintas",
+        "excerpt": "We provide freight forwarding and third-party warehousing for importers.",
+        "captured_at": "2026-11-19T09:15:00Z"
+      }
+    ],
+    "suggested_services": [],
+    "country_code": "ID"
+  },
+  {
+    "content_fingerprint": "example:pesisir-distribution",
+    "company_name": "CV Pesisir Produk Olahan",
+    "source_name": "Example trade association directory",
+    "source_url": "https://association.example/members/pesisir",
+    "website": "",
+    "address": "",
+    "industry": "Food processing",
+    "city": "Makassar",
+    "province": "Sulawesi Selatan",
+    "company_type": "Distributor",
+    "reason": "The directory mentions domestic distribution. The destinations and service requirements are unconfirmed.",
+    "confidence": "LOW",
+    "is_logistics_provider": false,
+    "last_checked_at": "2026-11-18T04:00:00Z",
+    "evidence": [
+      {
+        "url": "https://association.example/members/pesisir",
+        "excerpt": "We distribute packaged food products to local retailers.",
+        "captured_at": "2026-11-18T04:00:00Z"
+      }
+    ],
+    "suggested_services": [
+      {
+        "service": "Domestic trucking",
+        "reason": "Published retailer distribution is a signal to ask about delivery coverage.",
+        "evidence_url": "https://association.example/members/pesisir"
+      }
+    ],
+    "country_code": "ID",
+    "published_contacts": {
+      "RECEPTIONIST": {
+        "name": "Rani (example)",
+        "phone": "",
+        "email": ""
+      },
+      "LOGISTICS_PIC": {
+        "name": "Dewi (example)",
+        "phone": "",
+        "email": "logistics@pesisir.example"
+      }
+    }
+  }
+]
